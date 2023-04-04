@@ -1,31 +1,39 @@
 from typing import List
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 
-from models import Trade
+import uuid
+
+from fastapi_users import FastAPIUsers
+
+from auth.cookie import auth_backend
+from auth.database import User
+from auth.manager import get_user_manager
+from auth.schemas import UserRead, UserCreate
+
+fastapi_users = FastAPIUsers[User, uuid.UUID](
+    get_user_manager,
+    [auth_backend],
+)
 
 app = FastAPI(title='Trading App')
 
-users = [
-    {'id': 1, 'first_name': 'Dmitrii', 'last_name': 'Sidorov'},
-    {'id': 2, 'first_name': 'Olga', 'last_name': 'Sidorova'},
-    {'id': 3, 'first_name': 'Sofia', 'last_name': 'Liuba'},
-]
+current_user = fastapi_users.current_user()
 
-list_of_trades = []
+@app.get("/protected-route")
+def protected_route(user: User = Depends(current_user)):
+    return f"Hello, {user.username}"
 
 
-@app.get('/users/')
-def get_users():
-    return users
+app.include_router(
+    fastapi_users.get_auth_router(auth_backend),
+    prefix="/auth/jwt",
+    tags=["auth"],
+)
 
+app.include_router(
+    fastapi_users.get_register_router(UserRead, UserCreate),
+    prefix="/auth",
+    tags=["auth"],
+)
 
-@app.get('/users/{user_id}')
-def get_user(user_id: int):
-    return list(filter(lambda user: user['id'] == user_id, users))[0]
-
-
-@app.post('/trades/')
-def add_post(trades: List[Trade]):
-    list_of_trades.extend(trades)
-    return {'status': 200, 'data': list_of_trades}
