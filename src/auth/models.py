@@ -1,6 +1,10 @@
 from datetime import datetime
 
+from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTableUUID
 from sqlalchemy import MetaData, Table, Column, String, Integer, ForeignKey, JSON, Uuid, TIMESTAMP, Boolean
+from sqlalchemy.orm import mapped_column, Mapped
+
+from database import Base
 
 metadata = MetaData()
 
@@ -27,3 +31,17 @@ user = Table(
     Column('is_superuser', Boolean, default=False, nullable=False),
     Column('is_verified', Boolean, default=False, nullable=False)
 )
+
+
+class User(SQLAlchemyBaseUserTableUUID, Base):
+    id: Uuid = Column(Uuid, primary_key=True)
+    username: str = Column(String, nullable=False)
+    first_name: str = Column(String, nullable=False)
+    last_name: str = Column(String, nullable=False)
+    register_at: datetime = Column(TIMESTAMP, default=datetime.utcnow)
+    role_id: int = Column(Integer, ForeignKey(role.c.id))
+    email: Mapped[str] = mapped_column(String(length=320), unique=True, index=True, nullable=False)
+    hashed_password: Mapped[str] = mapped_column(String(length=1024), nullable=False)
+    is_active: bool = Column(Boolean, default=True, nullable=False)
+    is_superuser: bool = Column(Boolean, default=False, nullable=False)
+    is_verified: bool = Column(Boolean, default=False, nullable=False)
