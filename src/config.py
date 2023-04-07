@@ -13,3 +13,7 @@ DB_PASSWORD = os.environ.get('DB_PASSWORD')
 
 '''Secret key'''
 SECRET_KEY = os.environ.get('SECRET_KEY')
+
+'''Celery'''
+GOOGLE_APP_USER = os.environ.get('GOOGLE_APP_USER')
+GOOGLE_APP_PASSWORD = os.environ.get('GOOGLE_APP_PASSWORD')
