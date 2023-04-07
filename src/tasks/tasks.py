@@ -14,7 +14,7 @@ GOOGLE_APP_PORT = 465
 celery = Celery('tasks', broker='redis://localhost:6379')
 
 
-def get_email_template(username: str, user_email: EmailStr, template: str) -> EmailMessage:
+def get_email_template(username: str, user_email: EmailStr) -> EmailMessage:
     email = EmailMessage()
     email['Subject'] = 'Some Topic'
     email['From'] = GOOGLE_APP_USER
@@ -30,8 +30,8 @@ def get_email_template(username: str, user_email: EmailStr, template: str) -> Em
 
 
 @celery.task
-def send_email(user: Depends(current_user)):
-    email = get_email_template(user.username, user.email)
+def send_email(username: str, user_email: EmailStr):
+    email = get_email_template(username, user_email)
     with smtplib.SMTP_SSL(GOOGLE_APP_HOST, GOOGLE_APP_PORT) as service:
         service.login(GOOGLE_APP_USER, GOOGLE_APP_PASSWORD)
         service.send_message(email)

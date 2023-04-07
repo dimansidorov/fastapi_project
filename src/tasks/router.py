@@ -9,7 +9,7 @@ router = APIRouter(prefix='/report', tags=['Tasks'])
 
 @router.get('/send_report')
 def get_report(user=Depends(current_user)):
-    send_email(user)
+    send_email.delay(user.username, user.email)
     return {
         'status': 200,
         'data': 'Письмо отправлено',
