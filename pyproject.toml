@@ -1,0 +1,9 @@
+[tool.pytest.ini_options]
+pythonpath = [
+  ".", "src",
+]
+asyncio_mode="auto"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    # note the use of single quote below to denote "raw" strings in TOML
+]
