@@ -8,6 +8,7 @@ Description
 - SQLAlchemy
 - Alembic
 - Celery[redis]
+- pytest, pytest-asyncio
 
 
 ## License

@@ -1,3 +1,5 @@
+import os
+import sys
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
@@ -5,19 +7,16 @@ from sqlalchemy import pool
 
 from alembic import context
 
-import os
-import sys
-
 sys.path.append(os.path.join(sys.path[0], 'src'))
 
-from src.config import DB_HOST, DB_PORT, DB_USER, DB_NAME, DB_PASSWORD
-from src.auth.models import metadata as metadata_auth
-from src.operations.models import metadata as metadata_operations
+from config import DB_PASSWORD, DB_USER, DB_PORT, DB_NAME, DB_HOST
+from database import Base
+from src.auth.models import User
+from src.operations.models import Operation
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-
 section = config.config_ini_section
 config.set_section_option(section, "DB_HOST", DB_HOST)
 config.set_section_option(section, "DB_PORT", DB_PORT)
@@ -34,8 +33,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = [metadata_auth, metadata_operations]
-
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
