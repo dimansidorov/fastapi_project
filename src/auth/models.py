@@ -22,3 +22,6 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     is_verified: bool = Column(Boolean, default=False, nullable=False)
 
     operations = relationship('Operation', back_populates='user')
+
+    def __repr__(self):
+        return self.id
